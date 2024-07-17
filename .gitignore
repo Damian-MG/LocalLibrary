@@ -1,0 +1,5 @@
+# Created by Damian maleno
+
+# Distribution / packaging
+env/
+.env
