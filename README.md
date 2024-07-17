@@ -1,2 +1,2 @@
 # MovilViajero
-Personal project webpage woth Django
+Personal webpage project with Django.
