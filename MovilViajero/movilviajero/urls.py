@@ -1,5 +1,5 @@
 """
-URL configuration for movilviajerosite project.
+URL configuration for movilviajero project.
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/5.0/topics/http/urls/
