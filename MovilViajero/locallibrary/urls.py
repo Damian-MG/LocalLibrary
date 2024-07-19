@@ -1,5 +1,5 @@
 """
-URL configuration for movilviajero project.
+URL configuration for locallibrary project.
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/5.0/topics/http/urls/
@@ -24,8 +24,8 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
     # Use include() to add paths from the application
-    path('catalogo/', include('catalogo.urls')),
+    path('catalog/', include('catalog.urls')),
     #Add URL maps to redirect the base URL to our application
-    path('', RedirectView.as_view(url='/catalogo/', permanent=True)),
+    path('', RedirectView.as_view(url='/catalog/', permanent=True)),
     # Use static() to add url mapping to serve static files during development (only)
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
