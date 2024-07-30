@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.views import generic
 from .models import Book, Author, BookInstance, Genre
+from django.shortcuts import get_object_or_404
 
 
 # Create your views here.
@@ -34,15 +35,12 @@ def index(request):
 
 class BookListView(generic.ListView):
     model = Book
-    def get_queryset(self):
-        return Book.objects.filter(title__icontains='war')[:5]
-    context_object_name = 'my_book_list'   # su propio nombre para la lista como variable de plantilla
-    #queryset = Book.objects.filter(title__icontains='war')[:5] # Consigue 5 libros que contengan el título de guerra.
-    template_name = 'books/my_arbitrary_template_name_list.html'  # Especifique su propio nombre/ubicación de plantilla
+    paginate_by=1
+    context_object_name = 'book_list'   # your own name for the list as a template variable
+    queryset = Book.objects.filter(title__icontains='don')[:5] # Get 5 books containing the title war
+    template_name = 'books/my_arbitrary_template_name_list.html'  # Specify your own template name/location
+    
 
-    def get_context_data(self, **kwargs):
-        # Llame primero a la implementación base para obtener un contexto.
-        context = super(BookListView, self).get_context_data(**kwargs)
-        # Obtenga el blog del id y agréguelo al contexto.
-        context['some_data'] = 'Estos son solo algunos datos'
-        return context
+class BookDetailView(generic.DetailView):
+    model = Book
+
