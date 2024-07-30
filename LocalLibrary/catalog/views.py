@@ -44,3 +44,18 @@ class BookListView(generic.ListView):
 class BookDetailView(generic.DetailView):
     model = Book
 
+class AuthorListView(generic.ListView):
+	model = Author
+	context_object_name = 'author_list'
+	paginate_by = 10
+
+
+class AuthorDetailView(generic.DetailView):
+	model = Author
+	context_object_name = 'author'
+
+	def get_context_data(self, **kwargs):
+		context = super(AuthorDetailView, self).get_context_data(**kwargs)
+		context ['author_books'] = Book.objects.filter(author=self.kwargs['pk'])
+		return context
+
