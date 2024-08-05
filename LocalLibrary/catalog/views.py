@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.views import generic
 from .models import Book, Author, BookInstance, Genre
 from django.shortcuts import get_object_or_404
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 
 # Create your views here.
 def index(request):
@@ -74,5 +74,13 @@ class LoanedBooksByUserListView(LoginRequiredMixin,generic.ListView):
             BookInstance.objects.filter(borrower=self.request.user)
             .filter(status__exact='o')
             .order_by('due_back')
-        )
+        )   
 
+class AllLoanedBooksListView(PermissionRequiredMixin, generic.ListView):
+	permission_required = 'catalog.can_mark_returned'
+	model = BookInstance
+	template_name = 'catalog/bookinstance_list_all_borrowed_book.html'
+	paginate_by = 10
+
+	def get_queryset(self):
+		return BookInstance.objects.filter(status__exact='o').order_by('due_back')
