@@ -3,6 +3,7 @@ from django.views import generic
 from .models import Book, Author, BookInstance, Genre
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.utils import timezone
 
 # Create your views here.
 def index(request):
@@ -49,19 +50,19 @@ class BookDetailView(generic.DetailView):
     model = Book
 
 class AuthorListView(generic.ListView):
-	model = Author
-	context_object_name = 'author_list'
-	paginate_by = 10
+    model = Author
+    context_object_name = 'author_list'
+    paginate_by = 10
 
 
 class AuthorDetailView(generic.DetailView):
-	model = Author
-	context_object_name = 'author'
+    model = Author
+    context_object_name = 'author'
 
-	def get_context_data(self, **kwargs):
-		context = super(AuthorDetailView, self).get_context_data(**kwargs)
-		context ['author_books'] = Book.objects.filter(author=self.kwargs['pk'])
-		return context
+    def get_context_data(self, **kwargs):
+        context = super(AuthorDetailView, self).get_context_data(**kwargs)
+        context ['author_books'] = Book.objects.filter(author=self.kwargs['pk'])
+        return context
       
 class LoanedBooksByUserListView(LoginRequiredMixin,generic.ListView):
     """Generic class-based view listing books on loan to current user."""
@@ -77,10 +78,19 @@ class LoanedBooksByUserListView(LoginRequiredMixin,generic.ListView):
         )   
 
 class AllLoanedBooksListView(PermissionRequiredMixin, generic.ListView):
-	permission_required = 'catalog.can_mark_returned'
-	model = BookInstance
-	template_name = 'catalog/bookinstance_list_all_borrowed_book.html'
-	paginate_by = 10
+    permission_required = 'catalog.can_mark_returned'
+    model = BookInstance
+    template_name = 'catalog/bookinstance_list_all_borrowed_book.html'
+    paginate_by = 10
+       
+    def get_queryset(self):
+        return BookInstance.objects.filter(status__exact='o').order_by('due_back')
+      
+    def get_context_data(self, **kwargs):
+        # Get the base implementation of the context
+        context = super().get_context_data(**kwargs)
+        # Add the current date to the context
+        context['today'] = timezone.now().date()
+        return context
+      
 
-	def get_queryset(self):
-		return BookInstance.objects.filter(status__exact='o').order_by('due_back')
